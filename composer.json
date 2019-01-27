@@ -1,0 +1,17 @@
+{
+    "name": "ploginoff/test31",
+    "require-dev": {
+        "phpunit/phpunit": "^7.5"
+    },
+    "authors": [
+        {
+            "name": "Pavel Loginov",
+            "email": "ploginoff@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "psr/cache": "dev-master",
+        "psr/log": "dev-master"
+    }
+}
