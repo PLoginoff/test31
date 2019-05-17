@@ -36,7 +36,7 @@ class CacheProvider implements ProviderInterface, LoggerAwareInterface
     /**
      * CacheProvider constructor.
      *
-     * @param ProviderInterface $provider
+     * @param ProviderInterface      $provider
      * @param CacheItemPoolInterface $cache
      */
     public function __construct(ProviderInterface $provider, CacheItemPoolInterface $cache)
