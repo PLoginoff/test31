@@ -9,6 +9,11 @@
             "email": "ploginoff@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "PL\\": "src/"
+        }
+    },
     "require": {
         "php": ">=7.1",
         "psr/cache": "dev-master",
