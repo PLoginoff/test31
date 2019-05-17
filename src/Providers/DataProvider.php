@@ -4,8 +4,19 @@ namespace PL\Providers;
 
 class DataProvider implements ProviderInterface
 {
+    /**
+     * @var string
+     */
     protected $host;
+
+    /**
+     * @var string
+     */
     protected $user;
+
+    /**
+     * @var string
+     */
     protected $password;
 
     /**

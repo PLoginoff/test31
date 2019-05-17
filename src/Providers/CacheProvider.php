@@ -5,11 +5,16 @@ namespace PL\Providers;
 use DateTime;
 use Exception;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
-use PL\Providers\DataProvider;
 
-class CacheProvider implements ProviderInterface
+class CacheProvider implements ProviderInterface, LoggerAwareInterface
 {
+    /**
+     * @var ProviderInterface
+     */
+    protected $provider;
+
     /**
      * @var CacheItemPoolInterface
      */
@@ -20,22 +25,21 @@ class CacheProvider implements ProviderInterface
      */
     protected $logger;
 
-    /**
-     * @var DataProvider
-     */
-    protected $provider;
 
     const CACHE_PREFIX = 'provider.';
 
-    const CACHE_TIME   = '+1 day';
+    /**
+     * @var string
+     */
+    protected $cacheTime = '+1 day';
 
     /**
      * CacheProvider constructor.
      *
-     * @param DataProvider           $provider
+     * @param ProviderInterface $provider
      * @param CacheItemPoolInterface $cache
      */
-    public function __construct(DataProvider $provider, CacheItemPoolInterface $cache)
+    public function __construct(ProviderInterface $provider, CacheItemPoolInterface $cache)
     {
         $this->provider = $provider;
         $this->cache    = $cache;
@@ -52,8 +56,8 @@ class CacheProvider implements ProviderInterface
     public function get(array $input) : array
     {
         try {
-            $cacheKey  = $this->getCacheKey($input);
-            $cacheItem = $this->cache->getItem($cacheKey);
+            $cacheItem = $this->cache->getItem($this->getCacheKey($input));
+
             if ($cacheItem->isHit()) {
                 return $cacheItem->get();
             }
@@ -62,13 +66,13 @@ class CacheProvider implements ProviderInterface
 
             $cacheItem
                 ->set($result)
-                ->expiresAt(
-                    (new DateTime())->modify(self::CACHE_TIME)
-                );
+                ->expiresAt(new DateTime($this->cacheTime));
+
+            $this->cache->save($cacheItem);
 
             return $result;
         } catch (Exception $e) {
-            $this->logger->critical('Error');
+            $this->logger->critical('CacheProvider: ' . $e->getMessage(), ['input' => $input]);
             throw new $e; // todo make custom Exception
         }
     }
